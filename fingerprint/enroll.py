@@ -1,3 +1,9 @@
+from server import Server
+from client import Client
+
+server = Server()
+client = Client()
+
 class EnrollFailed(Exception):
     pass
 
@@ -23,7 +29,7 @@ def enroll(item):
     template_fingerprint = client.paillier_encrypt_vector(user_key_pair[0], transformed_fingerprint)
 
     # Server side
-    user_tid = server.store_template(template_fingerprint)
+    user_tid = server.store_template(user_tid,template_fingerprint)
 
     # Client side
     client.store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode)

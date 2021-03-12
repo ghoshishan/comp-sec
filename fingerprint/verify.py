@@ -1,3 +1,9 @@
+from server import Server
+from client import Client
+
+server = Server()
+client = Client()
+
 class AuthFailed(Exception):
     pass
 
@@ -29,7 +35,7 @@ if __name__ == "__main__":
         euclidean_distance = client.paillier_decrypt(user_key_pair[1], euclidean_distance_cipher)
 
         # Server side
-        if server.make_decision():
+        if server.make_decision(euclidean_distance):
             return
         else:
             raise AuthFailed
