@@ -1,6 +1,6 @@
-from db import Database
+from db import DatabaseClient
 
-database = Database()
+database = DatabaseClient()
 
 
 class Client():
