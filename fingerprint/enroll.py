@@ -25,14 +25,14 @@ def enroll(item):
     user_key_pair = client.paillier_generate_keypair()
     user_vcode = client.generate_verification_code()
 
-    transformed_fingerprint = client.enrollment_transform(user_fingerprint, verification_code)
+    transformed_fingerprint = client.enrollment_transform(user_fingerprint, user_vcode)
     template_fingerprint = client.paillier_encrypt_vector(user_key_pair[0], transformed_fingerprint)
 
     # Server side
     user_tid = server.store_template(template_fingerprint)
 
     # Client side
-    client.store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode)
+    client.store_credentials(user_roll_no, user_pin, user_key_pair, user_vcode)
 
 # For each user
 for item in enroll_list:
