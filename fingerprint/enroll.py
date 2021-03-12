@@ -32,7 +32,7 @@ def enroll(item):
     user_tid = server.store_template(template_fingerprint)
 
     # Client side
-    client.store_credentials(user_roll_no, user_pin, user_key_pair, user_vcode)
+    client.store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode)
 
 # For each user
 for item in enroll_list:
