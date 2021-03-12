@@ -3,7 +3,7 @@
 
 class DatabaseServer:    
 
-    def store_template(user_tid,template_fingerprint):
+    def store_template(template_fingerprint):
         pass 
 
     def retrieve_template(user_tid):

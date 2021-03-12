@@ -3,7 +3,7 @@ from db import DatabaseServer
 database = DatabaseServer()
 
 class Server():
-    def store_template(store_template):
+    def store_template(template_fingerprint):
         return database.store_template(template_fingerprint)
 
     def retrieve_template(user_tid):
