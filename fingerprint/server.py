@@ -15,3 +15,11 @@ class Server():
     def make_decision(euclidean_distance):
         pass 
 
+    def mark_authentication(user_roll_no):
+        # Record the timestamp of authentication
+        pass
+
+    def get_auth_history(user_roll_no):
+        # Return array of timestamps at which user has authenticated
+        pass
+

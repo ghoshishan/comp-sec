@@ -36,6 +36,7 @@ if __name__ == "__main__":
 
         # Server side
         if server.make_decision(euclidean_distance):
+            server.mark_authentication(user_roll_no) # Stores timestamp of authentication
             return
         else:
             raise AuthFailed
