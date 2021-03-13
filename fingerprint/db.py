@@ -3,16 +3,16 @@
 
 class DatabaseServer:    
 
-    def store_template(template_fingerprint):
+    def store_template(self, template_fingerprint):
         pass 
 
-    def retrieve_template(user_tid):
+    def retrieve_template(self, user_tid):
         pass 
 
 class DatabaseClient:    
 
-    def store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode):
+    def store_credentials(self, user_roll_no, user_pin, user_tid, user_key_pair, user_vcode):
         pass
 
-    def retrieve_credentials(user_roll_no, user_pin):
+    def retrieve_credentials(self, user_roll_no, user_pin):
         pass
