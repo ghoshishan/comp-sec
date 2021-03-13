@@ -17,9 +17,10 @@ class Server():
 
     def mark_authentication(self, user_roll_no):
         # Record the timestamp of authentication
-        pass
+        db.mark_authentication(user_roll_no)
+        return
 
     def get_auth_history(self, user_roll_no):
         # Return array of timestamps at which user has authenticated
-        pass
+        return db.get_auth_history(user_roll_no)
 

@@ -5,6 +5,7 @@ database = DatabaseClient()
 
 class Client():
     def paillier_generate_keypair(self):
+        # Returns a two tuple (public_key, private_key)
         pass
 
     def generate_verification_code(self):
@@ -12,8 +13,15 @@ class Client():
     
     def enrollment_transform(self, user_fingerprint, user_vcode):
         pass
-    
-    def paillier_encrypt_vector(self, user_key, transformed_fingerprint):
+
+    def paillier_encrypt(self, pub_key, plaintxt):
+        pass
+        
+    def paillier_decrypt(self, priv_key, cipher):
+        pass 
+
+    def paillier_encrypt_vector(self, pub_key, transformed_fingerprint):
+        # Return component wise encrypted vector
         pass
     
     def store_credentials(self, user_roll_no, user_pin, user_tid, user_key_pair, user_vcode):
@@ -26,7 +34,6 @@ class Client():
         # is not this same as enrollment_transform 
         pass 
 
-    def paillier_decrypt(self,user_key, euclidean_distance_cipher):
-        pass 
+
 
     

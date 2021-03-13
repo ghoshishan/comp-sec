@@ -8,6 +8,14 @@ class DatabaseServer:
 
     def retrieve_template(self, user_tid):
         pass 
+    
+    def mark_authentication(self, user_roll_no):
+        # Calculate current timestamp append it to the user`s list of timestamps
+        pass
+
+    def get_auth_history(user_roll_no):
+        # Return user's list of authentication timestamps
+        pass
 
 class DatabaseClient:    
 
