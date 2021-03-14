@@ -9,10 +9,15 @@ class Client():
         pass
 
     def generate_verification_code(self):
-        pass 
+        user_vcode = random.sample(range(1, 255), 4)
+        return user_vcode
     
     def enrollment_transform(self, user_fingerprint, user_vcode):
-        pass
+        transformed_fingerprint = user_fingerprint + user_vcode
+        sumOfXiSquare = sum(x*x for x in user_fingerprint)
+        sumOfViSquare = sum(v*v for v in user_vcode)
+        transformed_fingerprint.extend([1,1,sumOfXiSquare, sumOfViSquare])
+        return transformed_fingerprint
 
     def paillier_encrypt(self, pub_key, plaintxt):
         pass
@@ -32,7 +37,12 @@ class Client():
 
     def verification_transform(self,user_fingerprint, user_vcode):
         # is not this same as enrollment_transform 
-        pass 
+        transformed_fingerprint = user_fingerprint + user_vcode
+        transformed_fingerprint = [ -2*n for n in transformed_fingerprint] 
+        sumOfYiSquare = sum(y*y for y in user_fingerprint)
+        sumOfViSquare = sum(v*v for v in user_vcode)
+        transformed_fingerprint.extend([sumOfYiSquare, sumOfViSquare,1, 1])
+        return transformed_fingerprint
 
 
 
