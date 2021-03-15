@@ -1,4 +1,10 @@
 
+# Server logs
+server.log
+
+# Server database
+templates.json
+
 # Ishan's env files
 .vscode/
 .editorconfig
