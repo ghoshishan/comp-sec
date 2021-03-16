@@ -1,7 +1,10 @@
 import json
 import logging
+import pathlib
 
 from phe import paillier, EncryptedNumber, PaillierPublicKey
+
+import server.dbhandler as dbhandler
 
 
 class Server():
@@ -35,15 +38,7 @@ class Server():
         """
         self.logger = self.get_logger()  # for server logs
 
-        try:
-            with open('server-data/templates.json') as file:
-                data = json.load(file)
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            # json decode error happens when file is empty
-            data = []
-            with open('server-data/templates.json', 'w') as file:
-                json.dump(data, file)
-            self.logger.error(e)
+        data = dbhandler.read_data()
 
         if not data:
             self.tid = 0
@@ -63,9 +58,7 @@ class Server():
         :param pub_key_n:
         :return: template id of the template stored, None if error
         """
-        with open('server-data/templates.json') as file:
-            data = json.load(file)
-
+        data = dbhandler.read_data()
         self.tid = self.tid + 1
 
         try:
@@ -75,8 +68,7 @@ class Server():
                             'fingerprint': serializable_encrypted_fingerprint,
                             'public_key': pub_key_n}
             data.append(new_template)
-            with open('server-data/templates.json', 'w') as file:
-                json.dump(data, file, indent=2)
+            dbhandler.write_data(data)
         except Exception as e:
             self.logger.exception(e)
             raise Exception(e)
@@ -95,8 +87,7 @@ class Server():
         :param user_tid: template id of the user from client
         :return: fingerprint template if it exists else None
         """
-        with open('server-data/templates.json') as file:
-            data = json.load(file)
+        data = dbhandler.read_data()
         for entry in data:
             if entry['tid'] == user_tid:
                 return entry
@@ -160,32 +151,10 @@ class Server():
         formatter = logging.Formatter(
             '%(asctime)s: %(module)s: [%(levelname)s]: %(message)s')
 
-        file_handler = logging.FileHandler('server-data/server.log')
+        file_name = pathlib.Path(__file__).parent / 'logs/server.log'
+        file_handler = logging.FileHandler(file_name)
         file_handler.setLevel(logging.DEBUG)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
         return logger
-
-
-if __name__ == '__main__':
-    server = Server()
-
-    pub_key, priv_key = paillier.generate_paillier_keypair()
-    X = [22, 53, 61, 62, 74]
-    V = [11, 40, 45]
-    X_transformed = [22, 53, 61, 62, 74, 11, 40, 45, 1, 1, 16334, 3746]
-    encrypted_X = [pub_key.encrypt(i) for i in X_transformed]
-    server.store_template(encrypted_X, pub_key.n)
-
-    Y = [21, 52, 61, 62, 74]
-    V = [11, 40, 45]
-    Y_transformed = [-42, -104, -122, -124, -148, -22, -80, -90, 16186, 3746, 1, 1]
-    eucledian_distance = server.compute_euclidean(Y_transformed, server.tid)
-    eucledian_distance = priv_key.decrypt(EncryptedNumber(pub_key, eucledian_distance))
-    print(eucledian_distance)
-    res = server.make_decision(eucledian_distance)
-    if res == True:
-        print("Authenticated")
-    else:
-        print("Not Authenticated")

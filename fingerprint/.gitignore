@@ -1,0 +1,9 @@
+# log files
+client.log
+server.log
+
+# data stores
+userdata.json
+authhistory.json
+templates.json
+

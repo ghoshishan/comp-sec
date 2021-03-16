@@ -1,12 +1,2 @@
-
-# Server logs
-server.log
-
-# Server database
-templates.json
-
-# Ishan's env files
+# editor files
 .vscode/
-.editorconfig
-Pipfile
-Pipfile.lock
