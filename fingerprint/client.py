@@ -65,10 +65,15 @@ class Client():
             data = json.load(file)
         ciphertext = None
         iv = None
+        flag = 0
         for user in data:
             if user['roll_no'] == user_roll_no:
                 ciphertext = base64.b64decode(user['ciphertext'].encode('utf-8'))
                 iv = base64.b64decode(user['iv'].encode('utf-8'))
+                flag = 1
+                break
+        if flag == 0:
+            return None
         user_data = self.string_decrypt(user_pin, iv, ciphertext)
         user_data = json.loads(user_data)
         return user_data

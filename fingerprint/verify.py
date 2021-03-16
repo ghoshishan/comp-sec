@@ -22,6 +22,9 @@ def authenticate(user):
     user_fingerprint = user['fingerprint']
 
     user_data = client.retrieve_credentials(user_roll_no, user_pin)
+    if not user_data:
+        print("Unknown user")
+        return
     user_tid = user_data['tid']
     user_vcode = user_data['vcode']
     user_pub_key = PaillierPublicKey(user_data['n'])
