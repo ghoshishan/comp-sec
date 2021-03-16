@@ -1,12 +1,14 @@
-from db import DatabaseClient
+import json
+import base64
+import random
 
-database = DatabaseClient()
+from Crypto.Cipher import AES
+from Crypto.Protocol.KDF import PBKDF2
+from phe import paillier, EncryptedNumber, PaillierPublicKey
 
+SALT = b'=sNmXf\xd6\xefe\xf8\xd0\x10\xe5\xb2\xf3o\x01|\xf3\x99\xbf\xd6\x88\x0c\xb6\x9b\x08\xb3\xac\xf0\xb9g'
 
 class Client():
-    def paillier_generate_keypair(self):
-        # Returns a two tuple (public_key, private_key)
-        pass
 
     def generate_verification_code(self):
         user_vcode = random.sample(range(1, 255), 4)
@@ -16,42 +18,66 @@ class Client():
         transformed_fingerprint = user_fingerprint + user_vcode
         sumOfXiSquare = sum(x*x for x in user_fingerprint)
         sumOfViSquare = sum(v*v for v in user_vcode)
-        transformed_fingerprint.extend([1,1,sumOfXiSquare, sumOfViSquare])
+        transformed_fingerprint.extend([1, 1, sumOfXiSquare, sumOfViSquare])
         return transformed_fingerprint
 
-    def paillier_encrypt(self, pub_key, plaintxt):
-        pass
+    def string_encrypt(self, pin, plaintext):
+        key = PBKDF2(pin, SALT, dkLen=32)
+        data = plaintext.encode('utf-8')
+        cipher_encrypt = AES.new(key, AES.MODE_CFB)
+        ciphered_bytes = cipher_encrypt.encrypt(data)
+        iv = cipher_encrypt.iv
+        return ciphered_bytes, iv
 
-    def paillier_decrypt(self, priv_key, cipher):
-        pass
+    def string_decrypt(self, pin, iv, ciphertext):
+        key = PBKDF2(pin, SALT, dkLen=32)
+        cipher_decrypt = AES.new(key, AES.MODE_CFB, iv)
+        deciphered_bytes = cipher_decrypt.decrypt(ciphertext)
+        decrypted_data = deciphered_bytes.decode('utf-8')
+        return decrypted_data
 
     def paillier_encrypt_vector(self, pub_key, transformed_fingerprint):
-        # Return component wise encrypted vector
-        pass
+        return [pub_key.encrypt(feature) for feature in transformed_fingerprint]
 
-    def store_credentials(self, user_roll_no, user_pin, user_tid, user_key_pair, user_vcode):
-        return database.store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode)
+    def store_credentials(self, user_roll_no, user_pin, user_tid, user_pub_key, user_priv_key, user_vcode):
+        with open('client-data/userdata.json') as file:
+            data = json.load(file)
+        user_data = {
+            'tid': user_tid,
+            'vcode': user_vcode,
+            'n': user_pub_key.n,
+            'p': user_priv_key.p,
+            'q': user_priv_key.q
+        }
+        user_data_string = json.dumps(user_data)
+        ciphertext, iv = self.string_encrypt(user_pin, user_data_string)
+        store_data = {
+            'roll_no': user_roll_no,
+            'ciphertext': base64.b64encode(ciphertext).decode('utf-8'),
+            'iv': base64.b64encode(iv).decode('utf-8')
+        }
+        data.append(store_data)
+        with open('client-data/userdata.json', 'w') as file:
+            json.dump(data, file, indent=2)
 
-    def retrieve_credentials(self,user_roll_no, user_pin):
-        return database.retrieve_credentials(user_roll_no, user_pin)
+    def retrieve_credentials(self, user_roll_no, user_pin):
+        with open('client-data/userdata.json') as file:
+            data = json.load(file)
+        ciphertext = None
+        iv = None
+        for user in data:
+            if user['roll_no'] == user_roll_no:
+                ciphertext = base64.b64decode(user['ciphertext'].encode('utf-8'))
+                iv = base64.b64decode(user['iv'].encode('utf-8'))
+        user_data = self.string_decrypt(user_pin, iv, ciphertext)
+        user_data = json.loads(user_data)
+        return user_data
 
-    def verification_transform(self,user_fingerprint, user_vcode):
+    def verification_transform(self, user_fingerprint, user_vcode):
         # is not this same as enrollment_transform
         transformed_fingerprint = user_fingerprint + user_vcode
-        transformed_fingerprint = [ -2*n for n in transformed_fingerprint]
+        transformed_fingerprint = [-2*n for n in transformed_fingerprint]
         sumOfYiSquare = sum(y*y for y in user_fingerprint)
         sumOfViSquare = sum(v*v for v in user_vcode)
-        transformed_fingerprint.extend([sumOfYiSquare, sumOfViSquare,1, 1])
+        transformed_fingerprint.extend([sumOfYiSquare, sumOfViSquare, 1, 1])
         return transformed_fingerprint
-
-    def mark_authentication(self, user_roll_no):
-        # Record the timestamp of authentication
-        db.mark_authentication(user_roll_no)
-        return
-
-    def get_auth_history(self, user_roll_no):
-        # Return array of timestamps at which user has authenticated
-        return db.get_auth_history(user_roll_no)
-
-
-

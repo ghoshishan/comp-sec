@@ -1,44 +1,39 @@
+import json
+
 from server import Server
 from client import Client
+
+from phe import paillier
 
 server = Server()
 client = Client()
 
-class EnrollFailed(Exception):
-    pass
-
 def parse_input():
-    pass
+    with open('enroll_input_list.json') as file:
+        data = json.load(file)
+    return data
 
-# Take inputs
-enroll_list = parse_input()
-
-def enroll(item):
-    
-    # Note: Raise EnrollFailed Exception if any of these functions fail
-
-    # Client side
-    user_roll_no = item.roll_no
-    user_pin = item.pin
-    user_fingerprint = item.fingerprint
-
-    user_key_pair = client.paillier_generate_keypair()
+def enroll(user):
+    user_roll_no = user['roll_no']
+    user_pin = user['pin']
+    user_fingerprint = user['fingerprint']
+    user_pub_key, user_priv_key = paillier.generate_paillier_keypair()
     user_vcode = client.generate_verification_code()
 
     transformed_fingerprint = client.enrollment_transform(user_fingerprint, user_vcode)
-    template_fingerprint = client.paillier_encrypt_vector(user_key_pair[0], transformed_fingerprint)
+    encrypted_fingerprint = client.paillier_encrypt_vector(user_pub_key, transformed_fingerprint)
 
-    # Server side
-    user_tid = server.store_template(template_fingerprint)
+    user_tid = server.store_template(encrypted_fingerprint, user_pub_key.n)
 
-    # Client side
-    client.store_credentials(user_roll_no, user_pin, user_tid, user_key_pair, user_vcode)
+    client.store_credentials(user_roll_no, user_pin, user_tid, user_pub_key, user_priv_key, user_vcode)
 
-# For each user
-for item in enroll_list:
 
-    try:
-        enroll(item)
-        print("Enrolled user", user.roll_no)
-    except EnrollFailed:
-        print("Could not enroll user", user.roll_no)
+if __name__ == '__main__':
+    enroll_list = parse_input()
+    for user in enroll_list:
+        try:
+            enroll(user)
+            print(f"Enrolled user: {user['roll_no']}")
+        except Exception as e:
+            print(f"Enrollment failed: {user['roll_no']}")
+            raise Exception(e)

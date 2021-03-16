@@ -1,31 +1,16 @@
-from server import Server
-from client import Client
 
-server = Server()
-client = Client()
-
-class NoRecord(Exception):
-    pass
-
-def human_readable_time(timestamp):
-    pass
+import json
 
 if __name__ == "__main__":
+    with open('client-data/authhistory.json') as file:
+        data = json.load(file)
 
-    while(True):
-        try:
+    roll_no = input('Enter roll no to search: ')
+    history = []
+    for entry in data:
+        if entry['roll_no'] == roll_no:
+            print(entry['timestamp'])
+            history.append(entry)
 
-            # Client side
-            user_roll_no = input("Enter a roll no: ")
-            
-            # Server side
-            timestamps = server.get_auth_history(user_roll_no)
-
-            # Client side
-
-            for t in timestamps:
-                print(human_readable_time(t))
-
-        except NoRecord:
-            print("No record found!")
-        
+    if not history:
+        print('No entry found')
