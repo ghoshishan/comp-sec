@@ -55,5 +55,10 @@ def generate_fingerprint_noise(vector_length, exceed_threshold = False):
 
 def alter_fingerprint(fingerprint, exceed_threshold = False):
     noise = generate_fingerprint_noise(len(fingerprint), exceed_threshold)
-    altered = [(fingerprint[i] + noise[i]) % fingerprint_range[1] for i in range(len(fingerprint))]
+    altered = [(fingerprint[i] + noise[i]) for i in range(len(fingerprint))]
+    for i in range(len(altered)):
+        if altered[i] < fingerprint_range[0]:
+            altered[i] = fingerprint_range[0]
+        if altered[i] >= fingerprint_range[1]:
+            altered[i] = fingerprint_range[1]
     return altered
