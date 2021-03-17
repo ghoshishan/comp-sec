@@ -6,8 +6,9 @@ import logging
 from Crypto.Cipher import AES
 from Crypto.Protocol.KDF import PBKDF2
 from phe import paillier, EncryptedNumber, PaillierPublicKey
-
 import client.dbhandler as dbhandler
+
+from client.exceptions import WrongPin, UnknownUser
 
 logger = logging.getLogger('client')
 
@@ -149,10 +150,12 @@ def retrieve_credentials(user_roll_no, user_pin):
             break
     if flag == 0:
         print(f'Unknown user: {user_roll_no}')
+        raise UnknownUser
         return None
     user_data = string_decrypt(user_pin, iv, ciphertext)
     if not user_data:
         print(f'Incorrect pin: {user_roll_no}')
+        raise WrongPin
         return None
     user_data = json.loads(user_data)
     return user_data

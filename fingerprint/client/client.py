@@ -9,6 +9,7 @@ import client.util as util
 import client.dbhandler as dbhandler
 from server.server import Server
 
+from client.exceptions import AuthFailed, DuplicateUser
 
 class Client:
     """
@@ -41,6 +42,7 @@ class Client:
         for entry in data:
             if user_roll_no == entry['roll_no']:
                 print(f'User already exits: {user_roll_no}')
+                raise DuplicateUser
                 return
 
         user_pub_key, user_priv_key = paillier.generate_paillier_keypair()
@@ -102,6 +104,7 @@ class Client:
             # server.mark_authentication(user_roll_no)
         else:
             print(f'User not authenticated: {user_roll_no}')
+            raise AuthFailed
 
     def get_auth_history(self):
         data = dbhandler.read_data('authhistory.json')
