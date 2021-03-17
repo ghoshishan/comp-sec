@@ -27,8 +27,16 @@ def generate_verification_code():
     user_vcode = random.sample(range(1, 255), 4)
     return user_vcode
 
+def generate_shuffle_code():
+    """
+    Returns a random shuffle code.
 
-def enrollment_transform(user_fingerprint, user_vcode):
+    :return: shuffle code
+    """
+    user_shuffle_code = random.randint(1000, 9999)
+    return user_shuffle_code
+
+def enrollment_transform(user_fingerprint, user_vcode, user_shuffle_code):
     """
     Performs fingerprint transform during enrollment
 
@@ -40,6 +48,7 @@ def enrollment_transform(user_fingerprint, user_vcode):
     sumOfXiSquare = sum(x*x for x in user_fingerprint)
     sumOfViSquare = sum(v*v for v in user_vcode)
     transformed_fingerprint.extend([1, 1, sumOfXiSquare, sumOfViSquare])
+    random.Random(user_shuffle_code).shuffle(transformed_fingerprint)
     return transformed_fingerprint
 
 
@@ -99,7 +108,7 @@ def paillier_encrypt_vector(pub_key, transformed_fingerprint):
     return encrypted_fingerprint
 
 
-def store_credentials(user_roll_no, user_pin, user_tid, user_pub_key, user_priv_key, user_vcode):
+def store_credentials(user_roll_no, user_pin, user_tid, user_pub_key, user_priv_key, user_vcode, user_shuffle_code):
     """
     Store credentials of the user in an encrypted format.
 
@@ -114,6 +123,7 @@ def store_credentials(user_roll_no, user_pin, user_tid, user_pub_key, user_priv_
     user_data = {
         'tid': user_tid,
         'vcode': user_vcode,
+        'scode': user_shuffle_code,
         'n': user_pub_key.n,
         'p': user_priv_key.p,
         'q': user_priv_key.q
@@ -161,7 +171,7 @@ def retrieve_credentials(user_roll_no, user_pin):
     return user_data
 
 
-def verification_transform(user_fingerprint, user_vcode):
+def verification_transform(user_fingerprint, user_vcode, user_shuffle_code):
     """
     Performs transformation on the fingerprint feature vector
     required during verification.
@@ -176,4 +186,5 @@ def verification_transform(user_fingerprint, user_vcode):
     sumOfYiSquare = sum(y*y for y in user_fingerprint)
     sumOfViSquare = sum(v*v for v in user_vcode)
     transformed_fingerprint.extend([sumOfYiSquare, sumOfViSquare, 1, 1])
+    random.Random(user_shuffle_code).shuffle(transformed_fingerprint)
     return transformed_fingerprint

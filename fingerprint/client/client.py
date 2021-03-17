@@ -47,9 +47,10 @@ class Client:
 
         user_pub_key, user_priv_key = paillier.generate_paillier_keypair()
         user_vcode = util.generate_verification_code()
+        user_shuffle_code = util.generate_shuffle_code()
 
         transformed_fingerprint = util.enrollment_transform(
-            user_fingerprint, user_vcode)
+            user_fingerprint, user_vcode, user_shuffle_code)
         encrypted_fingerprint = util.paillier_encrypt_vector(
             user_pub_key, transformed_fingerprint)
 
@@ -57,7 +58,7 @@ class Client:
             encrypted_fingerprint, user_pub_key.n)
 
         util.store_credentials(user_roll_no, user_pin, user_tid,
-                          user_pub_key, user_priv_key, user_vcode)
+                          user_pub_key, user_priv_key, user_vcode, user_shuffle_code)
         print(f'User enrolled: {user_roll_no}')
 
     def verify(self, user):
@@ -75,11 +76,12 @@ class Client:
             return
         user_tid = user_data['tid']
         user_vcode = user_data['vcode']
+        user_shuffle_code = user_data['scode']
         user_pub_key = PaillierPublicKey(user_data['n'])
         user_priv_key = PaillierPrivateKey(
             user_pub_key, user_data['p'], user_data['q'])
         transformed_fingerprint = util.verification_transform(
-            user_fingerprint, user_vcode)
+            user_fingerprint, user_vcode, user_shuffle_code)
 
         # Server side
         euclidean_distance_cipher = self.server.compute_euclidean(
