@@ -37,14 +37,14 @@ class TestingIntegration(unittest.TestCase):
     def setUpClass(cls):
         cls.cleardb()
 
-    def test_excact_authentication(self):
+    def test_1_excact_authentication(self):
         user = tutil.generate_random_user()
         logVerbose("\n#### Exact authentication")
         logVerbose(user)
         client.enroll(user)
         client.verify(user)
 
-    def test_within_threshold_authentication(self):
+    def test_2_within_threshold_authentication(self):
         logVerbose("\n#### Within threshold authentication")
         user = tutil.generate_random_user()
         client.enroll(user)
@@ -53,7 +53,7 @@ class TestingIntegration(unittest.TestCase):
         logVerbose(user)
         client.verify(user)
 
-    def test_authentication_exceeding_threshold(self):
+    def test_3_authentication_exceeding_threshold(self):
         logVerbose("\n#### Exceeding threshold authentication")
         user = tutil.generate_random_user()
         logVerbose(user)
@@ -68,7 +68,7 @@ class TestingIntegration(unittest.TestCase):
             # Test passes here
             pass
 
-    def test_duplicate_enrollment(self):
+    def test_4_duplicate_enrollment(self):
         logVerbose("\n#### Duplicate enrollment")
         user = tutil.generate_random_user()
         client.enroll(user)
@@ -78,7 +78,7 @@ class TestingIntegration(unittest.TestCase):
         except DuplicateUser:
             pass
 
-    def test_wrong_pin_entry(self):
+    def test_5_wrong_pin_entry(self):
         logVerbose("\n#### Entering wrong pin")
         user = tutil.generate_random_user()
         client.enroll(user)
@@ -89,7 +89,7 @@ class TestingIntegration(unittest.TestCase):
         except WrongPin:
             pass
 
-    def test_unknown_user(self):
+    def test_6_unknown_user(self):
         logVerbose("\n#### Trying to verify unknown user")
         user = tutil.generate_random_user()
         try:
@@ -98,7 +98,7 @@ class TestingIntegration(unittest.TestCase):
         except UnknownUser:
             pass
 
-    def test_auth_history(self):
+    def test_7_auth_history(self):
         logVerbose("\n#### Checking authentication history")
         user = tutil.generate_random_user()
         client.enroll(user)
@@ -113,7 +113,8 @@ class TestingIntegration(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.cleardb()
+        # cls.cleardb()
+        pass
 
 
 if __name__ == "__main__":
