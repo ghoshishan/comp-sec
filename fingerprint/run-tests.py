@@ -98,6 +98,19 @@ class TestingIntegration(unittest.TestCase):
         except UnknownUser:
             pass
 
+    def test_auth_history(self):
+        logVerbose("\n#### Checking authentication history")
+        user = tutil.generate_random_user()
+        client.enroll(user)
+        logVerbose(user)
+        attempts = 3
+        for i in range(attempts):
+            client.verify(user)
+        history = client.get_auth_history_by_roll_no(user["roll_no"])
+        logVerbose(history)
+        self.assertTrue(len(history) == attempts)
+
+
     @classmethod
     def tearDownClass(cls):
         cls.cleardb()

@@ -106,17 +106,22 @@ class Client:
             print(f'User not authenticated: {user_roll_no}')
             raise AuthFailed
 
-    def get_auth_history(self):
+    def get_auth_history_by_roll_no(self, roll_no):
         data = dbhandler.read_data('authhistory.json')
-        roll_no = input('Enter roll no to search: ')
         history = []
         for entry in data:
             if entry['roll_no'] == roll_no:
-                print(entry['timestamp'])
                 history.append(entry)
+        return history
 
+    def get_auth_history(self):
+        roll_no = input('Enter roll no to search: ')
+        history = self.get_auth_history_by_roll_no(roll_no)
         if not history:
             print(f'No entry found')
+        else:
+            for h in history:
+                print(h['timestamp'])
 
     def get_logger(self):
         """
