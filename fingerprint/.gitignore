@@ -7,3 +7,8 @@ userdata.json
 authhistory.json
 templates.json
 
+# Virtalenvs
+venv
+
+# Cache
+__pycache__

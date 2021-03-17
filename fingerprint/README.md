@@ -14,3 +14,8 @@ Shuffling is not done for simplicity
 
 There is no seperate storage for verification code, it will be encryted with users public key before storing alongside other
 user credentials encrypted with users pin. Due to this, there is no need of vid.
+
+# Testing
+
+Run `python3 run-tests.py`
+For more info, read comments in `run-tests.py`
