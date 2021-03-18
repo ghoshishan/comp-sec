@@ -19,3 +19,18 @@ user credentials encrypted with users pin. Due to this, there is no need of vid.
 
 Run `python3 run-tests.py`
 For more info, read comments in `run-tests.py`
+
+## CLI
+
+Run `python3 main.py`
+
+The cli has following options:
+- Enroll user
+    * Generate random user
+    * Give user data manually
+- Verify user
+    * Generate random user
+    * Give user data manually
+- Show authentication history
+    * Generate random roll no
+    * Enter a roll no manually

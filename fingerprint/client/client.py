@@ -41,7 +41,6 @@ class Client:
         data = dbhandler.read_data('userdata.json')
         for entry in data:
             if user_roll_no == entry['roll_no']:
-                print(f'User already exits: {user_roll_no}')
                 raise DuplicateUser
                 return
 
@@ -59,7 +58,6 @@ class Client:
 
         util.store_credentials(user_roll_no, user_pin, user_tid,
                           user_pub_key, user_priv_key, user_vcode, user_shuffle_code)
-        print(f'User enrolled: {user_roll_no}')
 
     def verify(self, user):
         """
@@ -90,10 +88,9 @@ class Client:
         # Client side
         euclidean_distance = user_priv_key.decrypt(
             EncryptedNumber(user_pub_key, euclidean_distance_cipher))
-        print(f'Eucledian distance: {euclidean_distance}')
+        print(f'Eucledian distance computed: {euclidean_distance}')
         # Server side
         if self.server.make_decision(euclidean_distance):
-            print(f'User authenticated: {user_roll_no}')
             data = dbhandler.read_data('authhistory.json')
             data.append(
                 {
@@ -105,7 +102,6 @@ class Client:
             # Stores timestamp of authentication
             # server.mark_authentication(user_roll_no)
         else:
-            print(f'User not authenticated: {user_roll_no}')
             raise AuthFailed
 
     def get_auth_history_by_roll_no(self, roll_no):
