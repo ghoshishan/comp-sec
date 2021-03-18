@@ -26,11 +26,11 @@ Run `python3 main.py`
 
 The cli has following options:
 - Enroll user
-    * Generate random user
-    * Give user data manually
 - Verify user
-    * Generate random user
-    * Give user data manually
 - Show authentication history
-    * Generate random roll no
-    * Enter a roll no manually
+- Create sample users to input file
+
+For the first 3 options, users can be
+- generated randomly
+- manually entered
+- selected from input file.

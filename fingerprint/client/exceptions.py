@@ -9,3 +9,6 @@ class WrongPin(Exception):
 
 class UnknownUser(Exception):
     pass
+
+class CliInvalidChoice(Exception):
+    pass
