@@ -72,6 +72,8 @@ def enroll_user_menu():
         print_user(user)
     elif option == "2":
         user = enter_user_data()
+        print("Following details were entered for user")
+        print_user(user)
     elif option == "3":
         try:
             user = select_user_from_input_file()
@@ -105,6 +107,8 @@ def authenticate_user_menu():
         print_user(user)
     elif option == "2":
         user = enter_user_data()
+        print("Following details were entered for user")
+        print_user(user)
     elif option == "3":
         try:
             user = select_user_from_input_file()
